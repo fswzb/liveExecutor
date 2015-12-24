@@ -68,7 +68,7 @@ class OrderPacket:
                 py_assert(order.direction == self.direction, ValueError, u"指令方向不匹配")
 
         else:
-            self.direction = 1
+            self.direction = 0
 
         self.order_dict = {order.id: order for order in orders}
         self.total_quantity = sum([order.quantity for order in orders])
@@ -114,7 +114,11 @@ def create_orders(target_portfolio,
 
         existing_direction = specific_symbol_order_packet.direction
 
-        if moving_amount != 0:
+        if existing_direction == 0:
+            new_order = OrderData(s, abs(moving_amount), sign(moving_amount))
+            new_orders.append(new_order)
+
+        elif moving_amount != 0:
             remaining_quantity = 0
             if sign(moving_amount) == existing_direction:
                 if existing_direction == sign(pre_target_portfolio[s]):
